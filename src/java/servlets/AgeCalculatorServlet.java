@@ -19,23 +19,29 @@ public class AgeCalculatorServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // capture the parameters from the POST request (the form)
-        String currentAge = request.getParameter("current_age");
+        String age = request.getParameter("current_age");
 
         // set the attributes for the JSP
-        request.setAttribute("currentAge", currentAge);
-        
-        // validate if variable doesn't exist or empty, show the form again
-        if (currentAge == null || currentAge.equals("")) {
-            // create a helpful message to send to the user
-            request.setAttribute("message", "You must give your current age.");
-            // forward the req and response objects to the JSP
-            // display the form again
+        request.setAttribute("currentage", age);
+
+        try {
+            // validate if variable doesn't exist or empty, show the form again
+            if (age == null || age.equals("")) {
+                // create a helpful message to send to the user
+                request.setAttribute("message", "You must give your current age.");
+                // forward the req and response objects to the JSP
+                // display the form again
+                getServletContext().getRequestDispatcher("/WEB-INF/agecalculator.jsp").forward(request, response);
+                // return; // very important! stop the code call
+            } else {
+                int currentAge = Integer.parseInt(age);
+                currentAge += 1; 
+                request.setAttribute("message", "Your age next birthday will be " + currentAge);
+                getServletContext().getRequestDispatcher("/WEB-INF/agecalculator.jsp").forward(request, response);
+            }
+        } catch (NumberFormatException n) {
+            request.setAttribute("message", "You must enter a number.");
             getServletContext().getRequestDispatcher("/WEB-INF/agecalculator.jsp").forward(request, response);
-            return; // very important! stop the code call
         }
-
-        // display the helloWorld.JSP
-        getServletContext().getRequestDispatcher("/WEB-INF/agecalculator.jsp").forward(request, response);
     }
-
 }
